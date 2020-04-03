@@ -341,6 +341,15 @@
 			reg = <0x0 0x80000000 0x0 0x600000>;
 		};
 
+		ramoops: ramoops@80600000 {
+			compatible = "ramoops";
+			reg = <0 0x80600000 0 0x00080000>;
+			record-size = <0x10000>;
+			console-size = <0x60000>;
+			pmsg-size = <0x10000>;
+			no-map;
+		};
+
 		xbl_aop_mem: xbl_aop_mem@80700000 {
 			compatible = "removed-dma-pool";
 			no-map;
