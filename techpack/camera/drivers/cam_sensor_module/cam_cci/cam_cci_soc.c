@@ -8,6 +8,76 @@
 
 enum cam_cci_state_t cci_state_for_vsync = 0;
 
+static int cam_cci_init_master(struct cci_device *cci_dev,
+	enum cci_i2c_master_t master)
+{
+	int i = 0, rc = 0;
+	void __iomem *base = NULL;
+	struct cam_hw_soc_info *soc_info = NULL;
+	uint32_t max_queue_0_size = 0, max_queue_1_size = 0;
+
+	soc_info = &cci_dev->soc_info;
+	base = soc_info->reg_map[0].mem_base;
+
+	max_queue_0_size = CCI_I2C_QUEUE_0_SIZE;
+	max_queue_1_size = CCI_I2C_QUEUE_1_SIZE;
+
+	cci_dev->master_active_slave[master]++;
+	if (!cci_dev->cci_master_info[master].is_initilized) {
+		/* Re-initialize the completion */
+		reinit_completion(
+		&cci_dev->cci_master_info[master].reset_complete);
+		reinit_completion(&cci_dev->cci_master_info[master].rd_done);
+
+		/* reinit the reports for the queue */
+		for (i = 0; i < NUM_QUEUES; i++)
+			reinit_completion(
+			&cci_dev->cci_master_info[master].report_q[i]);
+
+		/* Set reset pending flag to true */
+		cci_dev->cci_master_info[master].reset_pending = true;
+		cci_dev->cci_master_info[master].status = 0;
+		if (cci_dev->ref_count == 1) {
+			cam_io_w_mb(CCI_RESET_CMD_RMSK,
+				base + CCI_RESET_CMD_ADDR);
+			cam_io_w_mb(0x1, base + CCI_RESET_CMD_ADDR);
+		} else {
+			cam_io_w_mb((master == MASTER_0) ?
+				CCI_M0_RESET_RMSK : CCI_M1_RESET_RMSK,
+				base + CCI_RESET_CMD_ADDR);
+		}
+		if (!wait_for_completion_timeout(
+			&cci_dev->cci_master_info[master].reset_complete,
+			CCI_TIMEOUT)) {
+			CAM_ERR(CAM_CCI,
+				"Failed: reset complete timeout for master: %d",
+				master);
+			rc = -ETIMEDOUT;
+			cci_dev->master_active_slave[master]--;
+			return rc;
+		}
+
+		flush_workqueue(cci_dev->write_wq[master]);
+
+		/* Setting up the queue size for master */
+		cci_dev->cci_i2c_queue_info[master][QUEUE_0].max_queue_size
+					= max_queue_0_size;
+		cci_dev->cci_i2c_queue_info[master][QUEUE_1].max_queue_size
+					= max_queue_1_size;
+
+		CAM_DBG(CAM_CCI, "CCI Master[%d] :: Q0: %d Q1: %d", master,
+			cci_dev->cci_i2c_queue_info[master][QUEUE_0]
+				.max_queue_size,
+			cci_dev->cci_i2c_queue_info[master][QUEUE_1]
+				.max_queue_size);
+
+		cci_dev->cci_master_info[master].status = 0;
+		cci_dev->cci_master_info[master].is_initilized = true;
+	}
+
+	return 0;
+}
+
 int cam_cci_init(struct v4l2_subdev *sd,
 	struct cam_cci_ctrl *c_ctrl)
 {
@@ -189,7 +259,6 @@ int cam_cci_init(struct v4l2_subdev *sd,
 	}
 
 	cci_dev->cci_state = CCI_STATE_ENABLED;
-	cci_state_for_vsync = 1;
 
 	return 0;
 
@@ -426,7 +495,6 @@ int cam_cci_soc_release(struct cci_device *cci_dev)
 	}
 
 	cci_dev->cci_state = CCI_STATE_DISABLED;
-	cci_state_for_vsync = 0;
 	cci_dev->cycles_per_us = 0;
 
 	cam_cpas_stop(cci_dev->cpas_handle);
