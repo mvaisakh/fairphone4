@@ -197,9 +197,7 @@ irqreturn_t interrupt_ois_vsync_irq(int irq, void *dev)
 
 	if (pois_dev->dev_state == CAM_OIS_DEV_START)
 	{
-		mutex_lock(&pois_dev->dev_mutex);
 		pois_dev->need_read = 1;
-		mutex_unlock(&pois_dev->dev_mutex);
 		wake_up_interruptible(&pois_dev->queue);
 	}
 
@@ -607,7 +605,7 @@ static ssize_t c_ois_read(struct file *filp,char *buf,size_t len,loff_t *off)
 	}
 	if (wait_event_interruptible(pois_dev->queue, pois_dev->need_read != 0))
 		return -ERESTARTSYS;
-	mutex_lock(&pois_dev->dev_mutex);
+	pois_dev->need_read = 0;
 
 	rc = load_ois_data(pois_dev);
 	if (rc) {
@@ -641,8 +639,6 @@ static ssize_t c_ois_read(struct file *filp,char *buf,size_t len,loff_t *off)
 	}
 
 error_handle:
-	pois_dev->need_read = 0;
-	mutex_unlock(&pois_dev->dev_mutex);
 	return rc;
 }
 
@@ -657,11 +653,9 @@ static __poll_t c_ois_poll(struct file *filp, poll_table *wait)
 	__poll_t mask = 0;
 
 	poll_wait(filp, &pois_dev->queue, wait);
-	mutex_lock(&pois_dev->dev_mutex);
 	if (pois_dev->need_read) {
 		mask |= EPOLLIN;
 	}
-	mutex_unlock(&pois_dev->dev_mutex);
 
 	return mask;
 }
