@@ -761,7 +761,7 @@ int32_t cam_sensor_driver_cmd(struct cam_sensor_ctrl_t *s_ctrl,
 			s_ctrl->power_stat = CAM_SENSOR_POWER_ON;
 		}
 		else{
-			CAM_ERR(CAM_SENSOR,"SENSOR already power on !!");
+			CAM_DBG(CAM_SENSOR,"SENSOR already power on !!");
 		}
 
 		/* Match sensor ID */
@@ -893,7 +893,7 @@ int32_t cam_sensor_driver_cmd(struct cam_sensor_ctrl_t *s_ctrl,
 			s_ctrl->power_stat = CAM_SENSOR_POWER_ON;
 		}
 		else{
-			CAM_ERR(CAM_SENSOR,"SENSOR already power on!!");
+			CAM_DBG(CAM_SENSOR,"SENSOR already power on!!");
 		}
 
 		s_ctrl->sensor_state = CAM_SENSOR_ACQUIRE;
@@ -1072,7 +1072,7 @@ int32_t cam_sensor_driver_cmd(struct cam_sensor_ctrl_t *s_ctrl,
 			}
 			else
 			{
-				CAM_ERR(CAM_SENSOR,"sensor already init setting !!!!");
+				CAM_DBG(CAM_SENSOR,"sensor already init setting !!!!");
 			}
 			rc = delete_request(&s_ctrl->i2c_data.init_settings);
 			if (rc < 0) {
