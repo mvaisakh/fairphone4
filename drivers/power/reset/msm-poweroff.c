@@ -63,6 +63,10 @@ static void scm_disable_sdi(void);
  * So the SDI cannot be re-enabled when it already by-passed.
  */
 static int download_mode = 0; //1;  FP4-2872, disable ramdump, liquan.zhou.t2m, 20210908
+//+ FP4S-812.  Add ramdump debug way on user release. liquan.zhou.t2m. 20230103.
+static bool t2m_download_enable = 0;
+module_param_named(t2m_download_enable, t2m_download_enable, bool, 0664);
+//- FP4S-812.  Add ramdump debug way on user release. liquan.zhou.t2m. 20230103.
 static struct kobject dload_kobj;
 
 static int in_panic;
@@ -644,6 +648,11 @@ static int msm_restart_probe(struct platform_device *pdev)
 	if (scm_is_call_available(SCM_SVC_PWR, SCM_IO_DEASSERT_PS_HOLD) > 0)
 		scm_deassert_ps_hold_supported = true;
 
+       //+ FP4S-812.  Add ramdump debug way on user release. liquan.zhou.t2m. 20230103.
+	if (t2m_download_enable) {
+		download_mode = 1;
+	}
+       //- FP4S-812.  Add ramdump debug way on user release. liquan.zhou.t2m. 20230103.
 	set_dload_mode(download_mode);
 	if (!download_mode)
 		scm_disable_sdi();
