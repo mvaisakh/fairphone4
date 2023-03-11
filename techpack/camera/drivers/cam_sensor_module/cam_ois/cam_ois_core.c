@@ -387,7 +387,7 @@ static int cam_ois_gyro_calibration(struct cam_ois_ctrl_t *o_ctrl)
 	i2c_reg_setting.reg_setting[0].reg_data = cml_ois_gyro_calibration[13].val;
 	i2c_reg_setting.reg_setting[0].delay = 1;
 	i2c_reg_setting.reg_setting[0].data_mask = 0;
-	rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting);
+	rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting, false);
 	CAM_ERR(CAM_OIS, "write 0x0018 -> 0x0001");
 
 	mdelay(50);
@@ -395,7 +395,7 @@ static int cam_ois_gyro_calibration(struct cam_ois_ctrl_t *o_ctrl)
 	i2c_reg_setting.reg_setting[0].reg_data = cml_ois_gyro_calibration[14].val;
 	i2c_reg_setting.reg_setting[0].delay = 1;
 	i2c_reg_setting.reg_setting[0].data_mask = 0;
-	rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting);
+	rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting, false);
 	CAM_ERR(CAM_OIS, "write 0x9E18 -> 0x0002");
 
 	mdelay(50);
@@ -403,7 +403,7 @@ static int cam_ois_gyro_calibration(struct cam_ois_ctrl_t *o_ctrl)
 	i2c_reg_setting.reg_setting[0].reg_data = cml_ois_gyro_calibration[15].val;
 	i2c_reg_setting.reg_setting[0].delay = 1;
 	i2c_reg_setting.reg_setting[0].data_mask = 0;
-	rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting);
+	rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting, false);
 	CAM_ERR(CAM_OIS, "write 0x0024 -> 0x0001");
 
 	mdelay(50);
@@ -421,7 +421,7 @@ static int cam_ois_gyro_calibration(struct cam_ois_ctrl_t *o_ctrl)
 			i2c_reg_setting.reg_setting[0].delay = 1;
 			i2c_reg_setting.reg_setting[0].data_mask = 0;
 			CAM_ERR(CAM_OIS, "write 0x9fb2 -> 0x%x(default offset)",c);
-			rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting);
+			rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting, false);
 
 			mdelay(50);
 			i2c_reg_setting.reg_setting[0].reg_addr = cml_ois_gyro_calibration[17].reg;
@@ -429,7 +429,7 @@ static int cam_ois_gyro_calibration(struct cam_ois_ctrl_t *o_ctrl)
 			i2c_reg_setting.reg_setting[0].delay = 1;
 			i2c_reg_setting.reg_setting[0].data_mask = 0;
 			CAM_ERR(CAM_OIS, "write 0x9fb4 -> 0x%x(default offset)",d);
-			rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting);
+			rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting, false);
 		}
 		else
 			CAM_ERR(CAM_OIS, "invalid x(0x%x) or y(0x%x) gain",c,d);
@@ -448,7 +448,7 @@ static int cam_ois_gyro_calibration(struct cam_ois_ctrl_t *o_ctrl)
 			i2c_reg_setting.reg_setting[0].delay = 1;
 			i2c_reg_setting.reg_setting[0].data_mask = 0;
 			CAM_ERR(CAM_OIS, "write 0x9fb2 -> 0x%x(manual)",c);
-			rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting);
+			rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting, false);
 
 			mdelay(50);
 			i2c_reg_setting.reg_setting[0].reg_addr = cml_ois_gyro_calibration[17].reg;
@@ -456,7 +456,7 @@ static int cam_ois_gyro_calibration(struct cam_ois_ctrl_t *o_ctrl)
 			i2c_reg_setting.reg_setting[0].delay = 1;
 			i2c_reg_setting.reg_setting[0].data_mask = 0;
 			CAM_ERR(CAM_OIS, "write 0x9fb4 -> 0x%x(manual)",d);
-			rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting);
+			rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting, false);
 		}
 		else
 			CAM_ERR(CAM_OIS, "invalid x(0x%x) or y(0x%x) gain",c,d);
@@ -468,7 +468,7 @@ static int cam_ois_gyro_calibration(struct cam_ois_ctrl_t *o_ctrl)
 	i2c_reg_setting.reg_setting[0].delay = 1;
 	i2c_reg_setting.reg_setting[0].data_mask = 0;
 	CAM_ERR(CAM_OIS, "write 0x9b2c -> 0x0002");
-	rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting);
+	rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting, false);
 
 	mdelay(50);
 	cmd_adress = cml_ois_gyro_calibration[5].reg;
@@ -491,7 +491,7 @@ static int cam_ois_gyro_calibration(struct cam_ois_ctrl_t *o_ctrl)
 	i2c_reg_setting.reg_setting[0].delay = 1;
 	i2c_reg_setting.reg_setting[0].data_mask = 0;
 	CAM_ERR(CAM_OIS, "write 0x9b2a -> 0x0001");
-	rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting);
+	rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting, false);
 
 
 	mdelay(3000);
@@ -533,7 +533,7 @@ static int cam_ois_gyro_calibration(struct cam_ois_ctrl_t *o_ctrl)
 	i2c_reg_setting.reg_setting[0].delay = 1;
 	i2c_reg_setting.reg_setting[0].data_mask = 0;
 	CAM_ERR(CAM_OIS, "write 0x9b2c -> 0x0006");
-	rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting);
+	rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting, false);
 	if (rc < 0) {
 		CAM_ERR(CAM_OIS, "write {0x9b2a ,0x0001} failed %d", rc);
 	}
@@ -550,7 +550,7 @@ static int cam_ois_gyro_calibration(struct cam_ois_ctrl_t *o_ctrl)
 	i2c_reg_setting.reg_setting[0].delay = 1;
 	i2c_reg_setting.reg_setting[0].data_mask = 0;
 	CAM_ERR(CAM_OIS, "write 0x0220 -> 0xc0d4");
-	rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting);
+	rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting, false);
 	if (rc < 0) {
 		CAM_ERR(CAM_OIS, "write 0x0220 -> 0xc0d4 failed %d", rc);
 	}
@@ -561,7 +561,7 @@ static int cam_ois_gyro_calibration(struct cam_ois_ctrl_t *o_ctrl)
 	i2c_reg_setting.reg_setting[0].delay = 1;
 	i2c_reg_setting.reg_setting[0].data_mask = 0;
 	CAM_ERR(CAM_OIS, "write 0x9b2a -> 0x0001");
-	rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting);
+	rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting, false);
 	if (rc < 0) {
 		CAM_ERR(CAM_OIS, "write 0x9b2a -> 0x0001 failed %d", rc);
 	}
@@ -577,7 +577,7 @@ static int cam_ois_gyro_calibration(struct cam_ois_ctrl_t *o_ctrl)
 	i2c_reg_setting.reg_setting[0].delay = 1;
 	i2c_reg_setting.reg_setting[0].data_mask = 0;
 	CAM_ERR(CAM_OIS, "write 0x0220 -> 0x0000");
-	rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting);
+	rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting, false);
 	if (rc < 0) {
 		CAM_ERR(CAM_OIS, "write 0x0220 -> 0x0000 failed %d", rc);
 	}
@@ -813,7 +813,7 @@ static int cam_ois_init(struct cam_ois_ctrl_t *o_ctrl)
 	i2c_reg_setting.reg_setting[0].delay = 1;
 	i2c_reg_setting.reg_setting[0].data_mask = 0;
 	CAM_ERR(CAM_OIS, "write 0x0018 -> 0x0001");
-	rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting);
+	rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting, false);
 
 	mdelay(50);
 	i2c_reg_setting.reg_setting[0].reg_addr = cml_ois_control[6].reg;
@@ -821,7 +821,7 @@ static int cam_ois_init(struct cam_ois_ctrl_t *o_ctrl)
 	i2c_reg_setting.reg_setting[0].delay = 1;
 	i2c_reg_setting.reg_setting[0].data_mask = 0;
 	CAM_ERR(CAM_OIS, "write 0x9e18 -> 0x0002");
-	rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting);
+	rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting, false);
 
 	mdelay(50);
 	i2c_reg_setting.reg_setting[0].reg_addr = cml_ois_control[7].reg;
@@ -829,7 +829,7 @@ static int cam_ois_init(struct cam_ois_ctrl_t *o_ctrl)
 	i2c_reg_setting.reg_setting[0].delay = 1;
 	i2c_reg_setting.reg_setting[0].data_mask = 0;
 	CAM_ERR(CAM_OIS, "write 0x0024 -> 0x0001");
-	rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting);
+	rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting, false);
 
 	mdelay(50);
 	i2c_reg_setting.reg_setting[0].reg_addr = cml_ois_control[8].reg;
@@ -837,7 +837,7 @@ static int cam_ois_init(struct cam_ois_ctrl_t *o_ctrl)
 	i2c_reg_setting.reg_setting[0].delay = 1;
 	i2c_reg_setting.reg_setting[0].data_mask = 0;
 	CAM_ERR(CAM_OIS, "write 0x8820 -> 0x0028");
-	rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting);
+	rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting, false);
 
 	mdelay(50);
 	i2c_reg_setting.reg_setting[0].reg_addr = cml_ois_control[9].reg;
@@ -845,7 +845,7 @@ static int cam_ois_init(struct cam_ois_ctrl_t *o_ctrl)
 	i2c_reg_setting.reg_setting[0].delay = 1;
 	i2c_reg_setting.reg_setting[0].data_mask = 0;
 	CAM_ERR(CAM_OIS, "write 0x9b2a -> 0x0002");
-	rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting);
+	rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting, false);
 
 	mdelay(50);
 	cma_release(dev_get_cma_area((o_ctrl->soc_info.dev)),	page, fw_size);
@@ -926,7 +926,7 @@ static int cam_cml_ois_enable(struct cam_ois_ctrl_t *o_ctrl)
 	i2c_reg_setting.reg_setting[0].delay = 1;
 	i2c_reg_setting.reg_setting[0].data_mask = 0;
 	CAM_ERR(CAM_OIS, "write 0x9b2c -> 0x0001");
-	rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting);
+	rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting, false);
 	if (rc < 0) {
 		CAM_ERR(CAM_OIS, "write {0x9b2c ,0x0001} failed %d", rc);
 
@@ -938,7 +938,7 @@ static int cam_cml_ois_enable(struct cam_ois_ctrl_t *o_ctrl)
 	i2c_reg_setting.reg_setting[0].delay = 1;
 	i2c_reg_setting.reg_setting[0].data_mask = 0;
 	CAM_ERR(CAM_OIS, "write 0x9b2a -> 0x0001");
-	rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting);
+	rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting, false);
 	if (rc < 0) {
 		CAM_ERR(CAM_OIS, "write {0x9b2a ,0x0001} failed %d", rc);
 	}
@@ -982,7 +982,7 @@ static int cam_cml_ois_disable(struct cam_ois_ctrl_t *o_ctrl)
 	i2c_reg_setting.reg_setting[0].delay = 1;
 	i2c_reg_setting.reg_setting[0].data_mask = 0;
 	CAM_ERR(CAM_OIS, "write 0x9b2c -> 0x0001");
-	rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting);
+	rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting, false);
 	if (rc < 0) {
 		CAM_ERR(CAM_OIS, "write {0x9b2c ,0x0001} failed %d", rc);
 
@@ -994,7 +994,7 @@ static int cam_cml_ois_disable(struct cam_ois_ctrl_t *o_ctrl)
 	i2c_reg_setting.reg_setting[0].delay = 1;
 	i2c_reg_setting.reg_setting[0].data_mask = 0;
 	CAM_ERR(CAM_OIS, "write 0x9b2a -> 0x0000");
-	rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting);
+	rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting, false);
 	if (rc < 0) {
 		CAM_ERR(CAM_OIS, "write {0x9b2a ,0x0000} failed %d", rc);
 	}
@@ -1162,7 +1162,7 @@ static int cam_cml_ois_fw_upgrade(struct cam_ois_ctrl_t *o_ctrl)
 	i2c_reg_setting.reg_setting[0].delay = 1;
 	i2c_reg_setting.reg_setting[0].data_mask = 0;
 	CAM_ERR(CAM_OIS, "write 0x0020 -> 0x0001");
-	rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting);
+	rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting, false);
 	
 	mdelay(1);
 	i2c_reg_setting.reg_setting[0].reg_addr = 0x0024;
@@ -1170,7 +1170,7 @@ static int cam_cml_ois_fw_upgrade(struct cam_ois_ctrl_t *o_ctrl)
 	i2c_reg_setting.reg_setting[0].delay = 1;
 	i2c_reg_setting.reg_setting[0].data_mask = 0;
 	CAM_ERR(CAM_OIS, "write 0x0024 -> 0x0000");
-	rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting);
+	rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting, false);
 
 	mdelay(1);
 	i2c_reg_setting.reg_setting[0].reg_addr = 0x0220;
@@ -1178,7 +1178,7 @@ static int cam_cml_ois_fw_upgrade(struct cam_ois_ctrl_t *o_ctrl)
 	i2c_reg_setting.reg_setting[0].delay = 1;
 	i2c_reg_setting.reg_setting[0].data_mask = 0;
 	CAM_ERR(CAM_OIS, "write 0x0220 -> 0xC0D4");
-	rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting);
+	rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting, false);
 	
 	mdelay(1);
 	i2c_reg_setting.reg_setting[0].reg_addr = 0x3000;
@@ -1186,7 +1186,7 @@ static int cam_cml_ois_fw_upgrade(struct cam_ois_ctrl_t *o_ctrl)
 	i2c_reg_setting.reg_setting[0].delay = 1;
 	i2c_reg_setting.reg_setting[0].data_mask = 0;
 	CAM_ERR(CAM_OIS, "write 0x3000 -> 0x0000");
-	rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting);
+	rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting, false);
 	mdelay(1);
 
 	addr = 0x8000;//MCS_START_ADDRESS
@@ -1198,7 +1198,7 @@ static int cam_cml_ois_fw_upgrade(struct cam_ois_ctrl_t *o_ctrl)
 		i2c_reg_setting.reg_setting[0].delay = 1;
 		i2c_reg_setting.reg_setting[0].data_mask = 0;
 		CAM_ERR(CAM_OIS, "write 0x3008 -> 0x%x",addr);
-		rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting);
+		rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting, false);
 
 		mdelay(1);
         //erase sector 2kbyte
@@ -1207,7 +1207,7 @@ static int cam_cml_ois_fw_upgrade(struct cam_ois_ctrl_t *o_ctrl)
 		i2c_reg_setting.reg_setting[0].delay = 1;
 		i2c_reg_setting.reg_setting[0].data_mask = 0;
 		CAM_ERR(CAM_OIS, "write 0x300C -> 0x0002");
-		rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting);
+		rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting, false);
         addr += 0x800; //2kbyte
         mdelay(5);
     }
@@ -1223,7 +1223,7 @@ static int cam_cml_ois_fw_upgrade(struct cam_ois_ctrl_t *o_ctrl)
 		i2c_reg_setting.reg_setting[0].delay = 1;
 		i2c_reg_setting.reg_setting[0].data_mask = 0;
 		CAM_ERR(CAM_OIS, "write 0x3028 -> 0x%x",addr);
-		rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting);
+		rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting, false);
 		
         addr += 0x4; //2kbyte
 
@@ -1233,7 +1233,7 @@ static int cam_cml_ois_fw_upgrade(struct cam_ois_ctrl_t *o_ctrl)
 		i2c_reg_setting_1.reg_setting[0].delay = 1;
 		i2c_reg_setting_1.reg_setting[0].data_mask = 0;
 		CAM_ERR(CAM_OIS, "write 0x302C -> 0x%x",read_data);
-		rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting_1);
+		rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting_1, false);
 	}
 
 	i2c_reg_setting.reg_setting[0].reg_addr = 0x3048;
@@ -1241,14 +1241,14 @@ static int cam_cml_ois_fw_upgrade(struct cam_ois_ctrl_t *o_ctrl)
 	i2c_reg_setting.reg_setting[0].delay = 1;
 	i2c_reg_setting.reg_setting[0].data_mask = 0;
 	CAM_ERR(CAM_OIS, "write 0x3048 -> 0x8000");
-	rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting);
+	rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting, false);
 
 	i2c_reg_setting.reg_setting[0].reg_addr = 0x304C;
 	i2c_reg_setting.reg_setting[0].reg_data = 0x2000;
 	i2c_reg_setting.reg_setting[0].delay = 1;
 	i2c_reg_setting.reg_setting[0].data_mask = 0;
 	CAM_ERR(CAM_OIS, "write 0x304C -> 0x2000");
-	rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting);
+	rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting, false);
 	mdelay(1);
 	
 	i2c_reg_setting.reg_setting[0].reg_addr = 0x3050;
@@ -1256,7 +1256,7 @@ static int cam_cml_ois_fw_upgrade(struct cam_ois_ctrl_t *o_ctrl)
 	i2c_reg_setting.reg_setting[0].delay = 1;
 	i2c_reg_setting.reg_setting[0].data_mask = 0;
 	CAM_ERR(CAM_OIS, "write 0x3050 -> 0x0001");
-	rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting);
+	rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting, false);
 	mdelay(1);
 	
 	rc = camera_io_dev_read(&(o_ctrl->io_master_info),0x3054,&csH,CAMERA_SENSOR_I2C_TYPE_WORD,CAMERA_SENSOR_I2C_TYPE_WORD);
@@ -1279,7 +1279,7 @@ static int cam_cml_ois_fw_upgrade(struct cam_ois_ctrl_t *o_ctrl)
 	i2c_reg_setting.reg_setting[0].delay = 1;
 	i2c_reg_setting.reg_setting[0].data_mask = 0;
 	CAM_ERR(CAM_OIS, "write 0x0018 -> 0x0001");
-	rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting);
+	rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting, false);
 	mdelay(10);
 
 	/* cm4x1_MCS_download end*/
@@ -1292,7 +1292,7 @@ static int cam_cml_ois_fw_upgrade(struct cam_ois_ctrl_t *o_ctrl)
 	i2c_reg_setting.reg_setting[0].delay = 1;
 	i2c_reg_setting.reg_setting[0].data_mask = 0;
 	CAM_ERR(CAM_OIS, "write 0x0020 -> 0x0001");
-	rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting);
+	rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting, false);
 
     //stanby mode(MCU off)
     i2c_reg_setting.reg_setting[0].reg_addr = 0x0024;
@@ -1300,7 +1300,7 @@ static int cam_cml_ois_fw_upgrade(struct cam_ois_ctrl_t *o_ctrl)
 	i2c_reg_setting.reg_setting[0].delay = 1;
 	i2c_reg_setting.reg_setting[0].data_mask = 0;
 	CAM_ERR(CAM_OIS, "write 0x0024 -> 0x0000");
-	rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting);
+	rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting, false);
 
     //code protection
     i2c_reg_setting.reg_setting[0].reg_addr = 0x0220;
@@ -1308,7 +1308,7 @@ static int cam_cml_ois_fw_upgrade(struct cam_ois_ctrl_t *o_ctrl)
 	i2c_reg_setting.reg_setting[0].delay = 1;
 	i2c_reg_setting.reg_setting[0].data_mask = 0;
 	CAM_ERR(CAM_OIS, "write 0x0220 -> 0xC0D4");
-	rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting);
+	rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting, false);
 
     //select if flash
     i2c_reg_setting.reg_setting[0].reg_addr = 0x3000;
@@ -1316,7 +1316,7 @@ static int cam_cml_ois_fw_upgrade(struct cam_ois_ctrl_t *o_ctrl)
 	i2c_reg_setting.reg_setting[0].delay = 1;
 	i2c_reg_setting.reg_setting[0].data_mask = 0;
 	CAM_ERR(CAM_OIS, "write 0x3000 -> 0x0001");
-	rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting);
+	rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting, false);
 
     mdelay(1);
     addr = 0x0000;
@@ -1328,7 +1328,7 @@ static int cam_cml_ois_fw_upgrade(struct cam_ois_ctrl_t *o_ctrl)
 		i2c_reg_setting.reg_setting[0].delay = 1;
 		i2c_reg_setting.reg_setting[0].data_mask = 0;
 		CAM_ERR(CAM_OIS, "write 0x3008 -> 0x%x",addr);
-		rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting);
+		rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting, false);
 
         //erase page 512 byte
         i2c_reg_setting.reg_setting[0].reg_addr = 0x300C;
@@ -1336,7 +1336,7 @@ static int cam_cml_ois_fw_upgrade(struct cam_ois_ctrl_t *o_ctrl)
 		i2c_reg_setting.reg_setting[0].delay = 1;
 		i2c_reg_setting.reg_setting[0].data_mask = 0;
 		CAM_ERR(CAM_OIS, "write 0x300C -> 0x0001");
-		rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting);
+		rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting, false);
         addr += 0x200; //512 byte
         mdelay(5);
     }
@@ -1352,7 +1352,7 @@ static int cam_cml_ois_fw_upgrade(struct cam_ois_ctrl_t *o_ctrl)
 		i2c_reg_setting.reg_setting[0].delay = 1;
 		i2c_reg_setting.reg_setting[0].data_mask = 0;
 		CAM_ERR(CAM_OIS, "write 0x3028 -> 0x%x",addr);
-		rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting);
+		rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting, false);
 		addr += 0x4;
 		
 		/* program sequential write 2K byte */
@@ -1361,7 +1361,7 @@ static int cam_cml_ois_fw_upgrade(struct cam_ois_ctrl_t *o_ctrl)
 		i2c_reg_setting_1.reg_setting[0].delay = 1;
 		i2c_reg_setting_1.reg_setting[0].data_mask = 0;
 		CAM_ERR(CAM_OIS, "write 0x302C -> 0x%x",read_data);
-		rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting_1);
+		rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting_1, false);
     }
 
     /* Checksum calculation for fw data */
@@ -1372,21 +1372,21 @@ static int cam_cml_ois_fw_upgrade(struct cam_ois_ctrl_t *o_ctrl)
 	i2c_reg_setting.reg_setting[0].delay = 1;
 	i2c_reg_setting.reg_setting[0].data_mask = 0;
 	CAM_ERR(CAM_OIS, "write 0x3048 -> 0x0000");
-	rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting);
+	rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting, false);
 
 	i2c_reg_setting.reg_setting[0].reg_addr = 0x304C;
 	i2c_reg_setting.reg_setting[0].reg_data = 0x0200;
 	i2c_reg_setting.reg_setting[0].delay = 1;
 	i2c_reg_setting.reg_setting[0].data_mask = 0;
 	CAM_ERR(CAM_OIS, "write 0x304C -> 0x0200");
-	rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting);
+	rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting, false);
 
 	i2c_reg_setting.reg_setting[0].reg_addr = 0x3050;
 	i2c_reg_setting.reg_setting[0].reg_data = 0x0001;
 	i2c_reg_setting.reg_setting[0].delay = 1;
 	i2c_reg_setting.reg_setting[0].data_mask = 0;
 	CAM_ERR(CAM_OIS, "write 0x3050 -> 0x0001");
-	rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting);
+	rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting, false);
     mdelay(1);
 	
 	rc = camera_io_dev_read(&(o_ctrl->io_master_info),0x3054,&csH,CAMERA_SENSOR_I2C_TYPE_WORD,CAMERA_SENSOR_I2C_TYPE_WORD);
@@ -1413,7 +1413,7 @@ static int cam_cml_ois_fw_upgrade(struct cam_ois_ctrl_t *o_ctrl)
 	i2c_reg_setting.reg_setting[0].delay = 1;
 	i2c_reg_setting.reg_setting[0].data_mask = 0;
 	CAM_ERR(CAM_OIS, "write 0x0018 -> 0x0001");
-	rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting);
+	rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting, false);
 	mdelay(10);
 	
 	/* cm4x1_IF_download end*/
@@ -1501,7 +1501,7 @@ ssize_t ois_reg_store(struct device *dev,  struct device_attribute *attr, const 
 		i2c_reg_setting.reg_setting[0].delay = 1;
 		i2c_reg_setting.reg_setting[0].data_mask = 0;
 		CAM_ERR(CAM_OIS, "write 0x%x -> 0x%x",cmd_adress,cmd_data);
-		rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting);
+		rc = camera_io_dev_write(&(o_ctrl->io_master_info), &i2c_reg_setting, false);
 		if (rc < 0) {
 			CAM_ERR(CAM_OIS, "write 0x%x -> 0x%x failed %d",cmd_adress,cmd_data,rc);
 		
