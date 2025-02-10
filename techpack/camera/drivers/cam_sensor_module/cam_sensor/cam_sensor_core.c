@@ -807,7 +807,6 @@ int32_t cam_sensor_driver_cmd(struct cam_sensor_ctrl_t *s_ctrl,
 
 		if(s_ctrl->power_stat == CAM_SENSOR_POWER_ON)
 		{
-			cam_sensor_free_power_reg_rsc(s_ctrl);
 			rc = cam_sensor_power_down(s_ctrl);
 			if (rc < 0) {
 				CAM_ERR(CAM_SENSOR, "fail in Sensor Power Down");
