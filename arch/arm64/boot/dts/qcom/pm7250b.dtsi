@@ -213,7 +213,6 @@
 				interrupt-names = "qg-batt-missing",
 						  "qg-vbat-low",
 						  "qg-vbat-empty",
-						  "qg-fifo-done",
 						  "qg-good-ocv";
 			};
 
