@@ -1027,7 +1027,7 @@ int drm_notifier_callback(struct notifier_block *self,
  
     I("in\n");
  
-    if (!evdata)
+    if (!evdata || !evdata->data)
         return 0;
  
     if (!(event == DRM_PANEL_EARLY_EVENT_BLANK ||
