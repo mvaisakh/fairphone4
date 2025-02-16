@@ -5058,8 +5058,10 @@ static int qpnp_qg_probe(struct platform_device *pdev)
 
 #if defined(CONFIG_TCT_PM7250_COMMON)
 	chip->qg_ws = wakeup_source_register(&pdev->dev, "qg_voted_ws");
-	if (!chip->qg_ws)
+	if (!chip->qg_ws) {
+		wakeup_source_unregister(chip->qg_ws);
 		goto fail_device;
+	}
 #endif
 
 	chip->awake_votable = create_votable("QG_WS", VOTE_SET_ANY,
