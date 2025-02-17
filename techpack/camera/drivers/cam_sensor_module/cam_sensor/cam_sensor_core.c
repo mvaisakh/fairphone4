@@ -1550,7 +1550,7 @@ int sensor_start_thread(void *ctrl)
 					sensor_setting.addr_type = g_oem_sensor_setting.sensor582_sma.addr_type;
 					sensor_setting.data_type = g_oem_sensor_setting.sensor582_sma.data_type;
 					sensor_setting.delay = g_oem_sensor_setting.sensor582_sma.delay;
-					rc = camera_io_dev_write(&(s_ctrl->io_master_info),&sensor_setting, false);
+					rc = camera_io_dev_write(&(s_ctrl->io_master_info),&sensor_setting);
 					if(rc < 0)
 					{
 						CAM_ERR(CAM_SENSOR,"sensor init setting error!!!!");
