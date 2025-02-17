@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-2.0-only
 /*
- * Copyright (c) 2017-2018, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2017-2018, 2020, The Linux Foundation. All rights reserved.
  */
 
 #include "cam_ois_dev.h"
@@ -36,6 +36,25 @@ static long cam_ois_subdev_ioctl(struct v4l2_subdev *sd,
 	return rc;
 }
 
+static int cam_ois_subdev_open(struct v4l2_subdev *sd,
+	struct v4l2_subdev_fh *fh)
+{
+	struct cam_ois_ctrl_t *o_ctrl =
+		v4l2_get_subdevdata(sd);
+
+	if (!o_ctrl) {
+		CAM_ERR(CAM_OIS, "o_ctrl ptr is NULL");
+			return -EINVAL;
+	}
+
+	mutex_lock(&(o_ctrl->ois_mutex));
+	o_ctrl->open_cnt++;
+	CAM_DBG(CAM_OIS, "OIS open count %d", o_ctrl->open_cnt);
+	mutex_unlock(&(o_ctrl->ois_mutex));
+
+	return 0;
+}
+
 static int cam_ois_subdev_close(struct v4l2_subdev *sd,
 	struct v4l2_subdev_fh *fh)
 {
@@ -48,7 +67,14 @@ static int cam_ois_subdev_close(struct v4l2_subdev *sd,
 	}
 
 	mutex_lock(&(o_ctrl->ois_mutex));
-	cam_ois_shutdown(o_ctrl);
+	if (o_ctrl->open_cnt <= 0) {
+		mutex_unlock(&(o_ctrl->ois_mutex));
+		return -EINVAL;
+	}
+	o_ctrl->open_cnt--;
+	CAM_DBG(CAM_OIS, "OIS open count %d", o_ctrl->open_cnt);
+	if (o_ctrl->open_cnt == 0)
+		cam_ois_shutdown(o_ctrl);
 	mutex_unlock(&(o_ctrl->ois_mutex));
 
 	return 0;
@@ -120,6 +146,7 @@ static long cam_ois_init_subdev_do_ioctl(struct v4l2_subdev *sd,
 #endif
 
 static const struct v4l2_subdev_internal_ops cam_ois_internal_ops = {
+	.open  = cam_ois_subdev_open,
 	.close = cam_ois_subdev_close,
 };
 
@@ -309,12 +336,12 @@ static int32_t load_ois_data(struct cam_ois_dev *pois_dev)
 		return -EINVAL;
 	}
 	mutex_lock(&(o_ctrl->ois_mutex));
-	camera_io_dev_write_continuous(&o_ctrl->io_master_info, &pois_dev->i2c_reg_setting, 0);
+	camera_io_dev_write_continuous(&o_ctrl->io_master_info, &pois_dev->i2c_reg_setting, 0, false);
 	mdelay(1); /* for safe read data */
 	get_monotonic_boottime64(&ts);
 	pois_dev->load_ois_timestamp = time_stamp_val_for_cm401;
 	camera_io_dev_read_seq(&(o_ctrl->io_master_info),0x9DAC, pois_dev->reg_data_buffer,CAMERA_SENSOR_I2C_TYPE_WORD,CAMERA_SENSOR_I2C_TYPE_WORD,80);
-	camera_io_dev_write(&o_ctrl->io_master_info,&pois_dev->i2c_reg_setting_for_buffer0);
+	camera_io_dev_write(&o_ctrl->io_master_info,&pois_dev->i2c_reg_setting_for_buffer0, false);
 	mdelay(1); /* for safe read data */
 	camera_io_dev_read_seq(&(o_ctrl->io_master_info),0x9DAC, &pois_dev->reg_data_buffer[80],CAMERA_SENSOR_I2C_TYPE_WORD,CAMERA_SENSOR_I2C_TYPE_WORD,80);
 	reverse_byte(pois_dev);
@@ -374,6 +401,7 @@ static int cam_ois_i2c_driver_probe(struct i2c_client *client,
 		goto soc_free;
 
 	o_ctrl->cam_ois_state = CAM_OIS_INIT;
+	o_ctrl->open_cnt = 0;
 
 	return rc;
 
@@ -514,7 +542,7 @@ static int32_t cam_ois_platform_driver_probe(
 
 	platform_set_drvdata(pdev, o_ctrl);
 	o_ctrl->cam_ois_state = CAM_OIS_INIT;
-
+	o_ctrl->open_cnt = 0;
 	return rc;
 
 exit_free_gpio:

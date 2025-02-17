@@ -1,6 +1,7 @@
 /* SPDX-License-Identifier: GPL-2.0-only */
 /*
  * Copyright (c) 2017-2020, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2022-2023, Qualcomm Innovation Center, Inc. All rights reserved.
  */
 
 #ifndef _CAM_CCI_DEV_H_
@@ -18,7 +19,6 @@
 #include <linux/kernel.h>
 #include <linux/platform_device.h>
 #include <linux/semaphore.h>
-#include <linux/debugfs.h>
 #include <media/cam_sensor.h>
 #include <media/v4l2-event.h>
 #include <media/v4l2-ioctl.h>
@@ -31,19 +31,15 @@
 #include "cam_cci_hwreg.h"
 #include "cam_soc_util.h"
 #include "cam_debug_util.h"
-#include "cam_req_mgr_workq.h"
 
 #define V4L2_IDENT_CCI 50005
 #define CCI_I2C_QUEUE_0_SIZE 128
 #define CCI_I2C_QUEUE_1_SIZE 32
-#define CCI_I2C_QUEUE_0_SIZE_V_1_2 64
-#define CCI_I2C_QUEUE_1_SIZE_V_1_2 16
 #define CYCLES_PER_MICRO_SEC_DEFAULT 4915
 #define CCI_MAX_DELAY 1000000
 
-#define CCI_TIMEOUT msecs_to_jiffies(1500)
+#define CCI_TIMEOUT msecs_to_jiffies(100)
 
-#define NUM_MASTERS 2
 #define NUM_QUEUES 2
 
 #define CCI_PINCTRL_STATE_DEFAULT "cci_default"
@@ -59,7 +55,6 @@
 
 /* Max bytes that can be read per CCI read transaction */
 #define CCI_READ_MAX 256
-#define CCI_READ_MAX_V_1_2 0xE
 #define CCI_I2C_READ_MAX_RETRIES 3
 #define CCI_I2C_MAX_READ 8192
 #define CCI_I2C_MAX_WRITE 8192
@@ -72,10 +67,7 @@
 #define PRIORITY_QUEUE (QUEUE_0)
 #define SYNC_QUEUE (QUEUE_1)
 
-#define CAM_CCI_NACK_DUMP_EN      BIT(1)
-#define CAM_CCI_TIMEOUT_DUMP_EN   BIT(2)
-
-#define CCI_VERSION_1_2_9 0x10020009
+#define REPORT_IDSIZE 16
 
 enum cci_i2c_sync {
 	MSM_SYNC_DISABLE,
@@ -132,7 +124,7 @@ struct cam_cci_i2c_queue_info {
 };
 
 struct cam_cci_master_info {
-	uint32_t status;
+	int32_t status;
 	atomic_t q_free[NUM_QUEUES];
 	uint8_t q_lock[NUM_QUEUES];
 	uint8_t reset_pending;
@@ -144,9 +136,8 @@ struct cam_cci_master_info {
 	struct completion report_q[NUM_QUEUES];
 	atomic_t done_pending[NUM_QUEUES];
 	spinlock_t lock_q[NUM_QUEUES];
-	spinlock_t freq_cnt;
 	struct semaphore master_sem;
-	bool is_first_req;
+	spinlock_t freq_cnt_lock;
 	uint16_t freq_ref_cnt;
 	bool is_initilized;
 };
@@ -183,6 +174,7 @@ enum cam_cci_state_t {
  * @cci_clk_info:               CCI clock information
  * @cam_cci_i2c_queue_info:     CCI queue information
  * @i2c_freq_mode:              I2C frequency of operations
+ * @master_active_slave:        Number of active/connected slaves for master
  * @cci_clk_params:             CCI hw clk params
  * @cci_gpio_tbl:               CCI GPIO table
  * @cci_gpio_tbl_size:          GPIO table size
@@ -207,7 +199,6 @@ enum cam_cci_state_t {
  * @irqs_disabled:              Mask for IRQs that are disabled
  * @init_mutex:                 Mutex for maintaining refcount for attached
  *                              devices to cci during init/deinit.
- * @dump_en:                     To enable the selective dump
  */
 struct cci_device {
 	struct v4l2_subdev subdev;
@@ -216,9 +207,9 @@ struct cci_device {
 	uint8_t ref_count;
 	enum cam_cci_state_t cci_state;
 	struct cam_cci_i2c_queue_info
-		cci_i2c_queue_info[NUM_MASTERS][NUM_QUEUES];
-	struct cam_cci_master_info cci_master_info[NUM_MASTERS];
-	enum i2c_freq_mode i2c_freq_mode[NUM_MASTERS];
+		cci_i2c_queue_info[MASTER_MAX][NUM_QUEUES];
+	struct cam_cci_master_info cci_master_info[MASTER_MAX];
+	enum i2c_freq_mode i2c_freq_mode[MASTER_MAX];
 	uint8_t master_active_slave[MASTER_MAX];
 	struct cam_cci_clk_params_t cci_clk_params[I2C_MAX_MODES];
 	struct msm_pinctrl_info cci_pinctrl;
@@ -238,7 +229,6 @@ struct cci_device {
 	bool is_burst_read;
 	uint32_t irqs_disabled;
 	struct mutex init_mutex;
-	uint64_t  dump_en;
 };
 
 enum cam_cci_i2c_cmd_type {
@@ -297,6 +287,7 @@ struct cam_cci_ctrl {
 		struct cam_cci_wait_sync_cfg cci_wait_sync_cfg;
 		struct cam_cci_gpio_cfg gpio_cfg;
 	} cfg;
+	bool force_low_priority;
 };
 
 struct cci_write_async {
@@ -304,15 +295,12 @@ struct cci_write_async {
 	struct cam_cci_ctrl c_ctrl;
 	enum cci_i2c_queue_t queue;
 	struct work_struct work;
-	ktime_t workq_scheduled_ts;
 	enum cci_i2c_sync sync_en;
 };
 
 irqreturn_t cam_cci_irq(int irq_num, void *data);
 
 struct v4l2_subdev *cam_cci_get_subdev(int cci_dev_index);
-void cam_cci_dump_registers(struct cci_device *cci_dev,
-	enum cci_i2c_master_t master, enum cci_i2c_queue_t queue);
 
 #define VIDIOC_MSM_CCI_CFG \
 	_IOWR('V', BASE_VIDIOC_PRIVATE + 23, struct cam_cci_ctrl)
