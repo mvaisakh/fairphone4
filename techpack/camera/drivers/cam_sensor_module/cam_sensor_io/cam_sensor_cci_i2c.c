@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0-only
 /*
  * Copyright (c) 2017-2018, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2022 Qualcomm Innovation Center, Inc. All rights reserved.
  */
 
 #include "cam_sensor_cmn_header.h"
@@ -52,12 +53,12 @@ int32_t cam_cci_i2c_read(struct cam_sensor_cci_client *cci_client,
 
 union sf
 {
-	float f;
+	int f;
 	unsigned char s[4];
 }cam_gyro_gain;
 
-float gyro_gain_X = 0.0;
-float gyro_gain_Y = 0.0;
+int gyro_gain_test[2] = {0};
+
 
 int32_t cam_camera_cci_i2c_read_seq(struct cam_sensor_cci_client *cci_client,
 	uint32_t addr, uint8_t *data,
@@ -103,13 +104,15 @@ int32_t cam_camera_cci_i2c_read_seq(struct cam_sensor_cci_client *cci_client,
 	if (num_byte == 7494){
 		for (i = 0; i < 4; i++)
 			d[i] = data[6980+i];
-		sprintf(cam_gyro_gain.s,"%c%c%c%c", d[0],d[1],d[2],d[3]);
-		gyro_gain_X = cam_gyro_gain.f;//X gain
+		snprintf(cam_gyro_gain.s, sizeof(cam_gyro_gain.s), "%c%c%c%c",
+				d[0],d[1],d[2],d[3]);
+		gyro_gain_test[0] = cam_gyro_gain.f;
 
 		for (i = 0; i < 4; i++)
 			d[i] = data[6984+i];
-		sprintf(cam_gyro_gain.s,"%c%c%c%c", d[0],d[1],d[2],d[3]);
-		gyro_gain_Y = cam_gyro_gain.f;//Y gain
+		snprintf(cam_gyro_gain.s, sizeof(cam_gyro_gain.s), "%c%c%c%c",
+				d[0],d[1],d[2],d[3]);
+		gyro_gain_test[1] = cam_gyro_gain.f;
 	}
 
 	
@@ -120,7 +123,8 @@ int32_t cam_camera_cci_i2c_read_seq(struct cam_sensor_cci_client *cci_client,
 static int32_t cam_cci_i2c_write_table_cmd(
 	struct camera_io_master *client,
 	struct cam_sensor_i2c_reg_setting *write_setting,
-	enum cam_cci_cmd_type cmd)
+	enum cam_cci_cmd_type cmd,
+	bool force_low_priority)
 {
 	int32_t rc = -EINVAL;
 	struct cam_cci_ctrl cci_ctrl;
@@ -141,6 +145,7 @@ static int32_t cam_cci_i2c_write_table_cmd(
 	cci_ctrl.cfg.cci_i2c_write_cfg.data_type = write_setting->data_type;
 	cci_ctrl.cfg.cci_i2c_write_cfg.addr_type = write_setting->addr_type;
 	cci_ctrl.cfg.cci_i2c_write_cfg.size = write_setting->size;
+	cci_ctrl.force_low_priority = force_low_priority;
 	rc = v4l2_subdev_call(client->cci_client->cci_subdev,
 		core, ioctl, VIDIOC_MSM_CCI_CFG, &cci_ctrl);
 	if (rc < 0) {
@@ -160,25 +165,27 @@ static int32_t cam_cci_i2c_write_table_cmd(
 
 int32_t cam_cci_i2c_write_table(
 	struct camera_io_master *client,
-	struct cam_sensor_i2c_reg_setting *write_setting)
+	struct cam_sensor_i2c_reg_setting *write_setting,
+	bool force_low_priority)
 {
 	return cam_cci_i2c_write_table_cmd(client, write_setting,
-		MSM_CCI_I2C_WRITE);
+		MSM_CCI_I2C_WRITE, force_low_priority);
 }
 
 int32_t cam_cci_i2c_write_continuous_table(
 	struct camera_io_master *client,
 	struct cam_sensor_i2c_reg_setting *write_setting,
-	uint8_t cam_sensor_i2c_write_flag)
+	uint8_t cam_sensor_i2c_write_flag,
+	bool force_low_priority)
 {
 	int32_t rc = 0;
 
 	if (cam_sensor_i2c_write_flag == 1)
 		rc = cam_cci_i2c_write_table_cmd(client, write_setting,
-			MSM_CCI_I2C_WRITE_BURST);
+			MSM_CCI_I2C_WRITE_BURST, force_low_priority);
 	else if (cam_sensor_i2c_write_flag == 0)
 		rc = cam_cci_i2c_write_table_cmd(client, write_setting,
-			MSM_CCI_I2C_WRITE_SEQ);
+			MSM_CCI_I2C_WRITE_SEQ, force_low_priority);
 
 	return rc;
 }

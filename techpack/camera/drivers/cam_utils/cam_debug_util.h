@@ -43,8 +43,6 @@
 /* CAM_PERF: Used for performance (clock, BW etc) logs */
 #define CAM_PERF       (1 << 25)
 #define CAM_CUSTOM     (1 << 26)
-#define CAM_OPE        (1 << 28)
-#define CAM_PRESIL     (1 << 27)
 
 #define STR_BUFFER_MAX_LENGTH  1024
 
@@ -104,7 +102,7 @@ const char *cam_get_module_name(unsigned int module_id);
  * @args     :  Arguments which needs to be print in log
  */
 #define CAM_INFO(__module, fmt, args...)                           \
-	pr_info("CAM_INFO: %s: %s: %d " fmt "\n",                     \
+	pr_debug("CAM_INFO: %s: %s: %d " fmt "\n",                     \
 		cam_get_module_name(__module), __func__,  __LINE__, ##args)
 
 /*
