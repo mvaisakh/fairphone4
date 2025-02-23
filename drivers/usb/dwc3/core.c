@@ -1626,9 +1626,15 @@ static int dwc3_remove(struct platform_device *pdev)
 {
 	struct dwc3	*dwc = platform_get_drvdata(pdev);
 
-	dwc3_debugfs_exit(dwc);
+	pm_runtime_get_sync(&pdev->dev);
+
+	dwc3_core_exit_mode(dwc);
 	dwc3_gadget_exit(dwc);
-	pm_runtime_allow(&pdev->dev);
+	dwc3_debugfs_exit(dwc);
+
+	dwc3_core_exit(dwc);
+	dwc3_ulpi_exit(dwc);
+
 	pm_runtime_disable(&pdev->dev);
 
 	dwc3_free_event_buffers(dwc);
@@ -1778,7 +1784,7 @@ static int dwc3_resume_common(struct dwc3 *dwc, pm_message_t msg)
 		if (PMSG_IS_AUTO(msg))
 			break;
 
-		ret = dwc3_core_init(dwc);
+		ret = dwc3_core_init_for_resume(dwc);
 		if (ret)
 			return ret;
 
